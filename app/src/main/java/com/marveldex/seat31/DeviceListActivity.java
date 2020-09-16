@@ -79,7 +79,7 @@ public class DeviceListActivity extends Activity {
     private DeviceAdapter m_DeviceAdapter;
     private ServiceConnection onService = null;
     Map<String, Integer> m_DevRssiValues;
-    private static final long SCAN_PERIOD = 10000; //scanning for 10 seconds
+    private static final long SCAN_PERIOD = 30000; //scanning for 10 seconds
     private Handler m_Handler;
     private boolean m_Scanning;
 
@@ -202,7 +202,7 @@ public class DeviceListActivity extends Activity {
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                	
+
                               addDevice(device,rssi);
                 }
             });

@@ -58,7 +58,7 @@ import java.util.UUID;
  */
 public class UartService extends Service {
     private final static String TAG = UartService.class.getSimpleName();
-
+    private String indicator = "";
     private BluetoothManager m_BluetoothManager;
     private BluetoothAdapter m_BluetoothAdapter;
     private String m_BluetoothDeviceAddress;
@@ -79,8 +79,22 @@ public class UartService extends Service {
             "com.nordicsemi.nrfUART.ACTION_DATA_AVAILABLE";
     public final static String EXTRA_DATA =
             "com.nordicsemi.nrfUART.EXTRA_DATA";
+    public final static String EXTRA_DEVICE_INDICATOR =
+            "com.nordicsemi.nrfUART.EXTRA_DEVICE_INDICATOR";
     public final static String DEVICE_DOES_NOT_SUPPORT_UART =
             "com.nordicsemi.nrfUART.DEVICE_DOES_NOT_SUPPORT_UART";
+    public final static String ACTION_GATT_CONNECTED1 =
+            "com.nordicsemi.nrfUART.ACTION_GATT_CONNECTED1";
+    public final static String ACTION_GATT_DISCONNECTED1 =
+            "com.nordicsemi.nrfUART.ACTION_GATT_DISCONNECTED1";
+    public final static String ACTION_GATT_SERVICES_DISCOVERED1 =
+            "com.nordicsemi.nrfUART.ACTION_GATT_SERVICES_DISCOVERED1";
+    public final static String ACTION_DATA_AVAILABLE1 =
+            "com.nordicsemi.nrfUART.ACTION_DATA_AVAILABLE1";
+    public final static String EXTRA_DATA1 =
+            "com.nordicsemi.nrfUART.EXTRA_DATA1";
+    public final static String DEVICE_DOES_NOT_SUPPORT_UART1 =
+            "com.nordicsemi.nrfUART.DEVICE_DOES_NOT_SUPPORT_UART1";
 
     public static final UUID TX_POWER_UUID = UUID.fromString("00001804-0000-1000-8000-00805f9b34fb");
     public static final UUID TX_POWER_LEVEL_UUID = UUID.fromString("00002a07-0000-1000-8000-00805f9b34fb");
@@ -95,7 +109,6 @@ public class UartService extends Service {
     public static boolean getIsDisconnIntentional(){
         return m_is_Disconnect_Intentional;
     };
-
     /**
      *
      * @brief
@@ -176,6 +189,7 @@ public class UartService extends Service {
 
             // Log.d(TAG, String.format("Received TX: %d",characteristic.getValue() ));
             intent.putExtra(EXTRA_DATA, characteristic.getValue());
+            intent.putExtra(EXTRA_DEVICE_INDICATOR, this.indicator);
         } else {
 
         }
@@ -392,5 +406,9 @@ public class UartService extends Service {
         if (m_BluetoothGatt == null) return null;
 
         return m_BluetoothGatt.getServices();
+    }
+
+    public void setIndicator(String indicator){
+        this.indicator = indicator;
     }
 }

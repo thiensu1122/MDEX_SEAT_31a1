@@ -16,6 +16,12 @@
             android:layout_height="wrap_content"
             android:padding="12dp"
             android:text="@string/ui_connect" />
+        <Button
+            android:id="@+id/btn_select1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="12dp"
+            android:text="@string/ui_connect" />
 
         <RelativeLayout
             android:id="@+id/LL_BLIND_TIME_AREA"
