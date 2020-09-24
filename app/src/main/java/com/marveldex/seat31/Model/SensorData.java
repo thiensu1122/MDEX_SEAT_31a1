@@ -2,9 +2,7 @@ package com.marveldex.seat31.Model;
 
 import android.util.Log;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
 public class SensorData {
     private static final String TAG = "SensorData";
@@ -13,9 +11,9 @@ public class SensorData {
     //40Bytes
     byte[] rawDataSensor2 = new byte[40];
     // 20 bytes
-    byte[] backLeft = new byte[20];
+    byte[] backTop = new byte[20];
     // 20 bytes
-    byte[] backRight = new byte[20];
+    byte[] backBottom = new byte[20];
     // 10 bytes
     byte[] hipLeft = new byte[10];
     // 10 bytes
@@ -42,13 +40,13 @@ public class SensorData {
         if(isIndicatorEmpty(1) || isFistSensor(rawInput)){
             if(rawInput[0] == 'M') {
                 System.arraycopy(rawInput, 1, rawDataSensor1, 0, 20); // offset source 1 for indicator 'M', offset destination 0, number of bytes 20 for 'M';
-                System.arraycopy(rawInput, 1, backLeft, 0, 20); // offset source 1 for indicator 'M', offset destination 0, number of bytes 20 for 'M'
+                System.arraycopy(rawInput, 1, backTop, 0, 20); // offset source 1 for indicator 'M', offset destination 0, number of bytes 20 for 'M'
                 System.arraycopy(rawInput, 21, firstIndicator, 0, 3);
                 isPackage1Complete = false;
             }
             if(rawInput[0] == 'S'){
                 System.arraycopy(rawInput, 1, rawDataSensor1, 20, 20); // offset source 1 for indicator 'S', offset destination 20 since M took 20 bytes, number of bytes 20 for 'S';
-                System.arraycopy(rawInput, 1, backRight, 0, 20); // offset source 1 for indicator 'S', offset destination 20 since S took 20 bytes, number of bytes 20 for 'S'
+                System.arraycopy(rawInput, 1, backBottom, 0, 20); // offset source 1 for indicator 'S', offset destination 20 since S took 20 bytes, number of bytes 20 for 'S'
                 System.arraycopy(rawInput, 21, firstIndicator, 0, 3);
                 isPackage1Complete = true;
    
@@ -84,8 +82,10 @@ public class SensorData {
     public void clearIndicator(int index){
         if(index ==1){
             Arrays.fill( firstIndicator, (byte) 0 );
+            isPackage1Complete = false;
         } else if (index ==2 ){
             Arrays.fill( secondIndicator, (byte) 0 );
+            isPackage2Complete = false;
         }
     }
 
@@ -108,12 +108,12 @@ public class SensorData {
         return rawDataSensor2;
     }
 
-    public byte[] getBackLeft() {
-        return backLeft;
+    public byte[] getBackTop() {
+        return backTop;
     }
 
-    public byte[] getBackRight() {
-        return backRight;
+    public byte[] getBackBottom() {
+        return backBottom;
     }
 
     public byte[] getHipLeft() {
@@ -141,12 +141,14 @@ public class SensorData {
     }
 
     public void printData(){
-//        Log.d(TAG, "Raw data 1 : " + Arrays.toString(rawDataSensor1));
-//        Log.d(TAG, "Raw data 2 : " + Arrays.toString(rawDataSensor2));
-//        Log.d(TAG, "back left : " + Arrays.toString(backLeft));
-//        Log.d(TAG, "back right : " +Arrays.toString(backRight));
-//        Log.d(TAG, "thigh left : " + Arrays.toString(thighLeft));
-//        Log.d(TAG, "thigh right : " + Arrays.toString(thighRight));
+        Log.d(TAG, "Raw data 1 : " + Arrays.toString(rawDataSensor1));
+        Log.d(TAG, "Raw data 2 : " + Arrays.toString(rawDataSensor2));
+        Log.d(TAG, "back Top : " + Arrays.toString(backTop));
+        Log.d(TAG, "back Bottom : " +Arrays.toString(backBottom));
+        Log.d(TAG, "thigh left : " + Arrays.toString(thighLeft));
+        Log.d(TAG, "thigh right : " + Arrays.toString(thighRight));
+        Log.d(TAG, "Fist Sensor : " + Arrays.toString(firstIndicator));
+        Log.d(TAG, "Second Sensor : " + Arrays.toString(secondIndicator));
         Log.d(TAG, "is Data 1 complete : " + isPackage1Complete);
         Log.d(TAG, "is Data 2 complete : " + isPackage2Complete);
     }
