@@ -64,14 +64,9 @@ public class UartService extends Service {
 
     private BluetoothManager m_BluetoothManager;
     private BluetoothAdapter m_BluetoothAdapter;
-//    private String m_BluetoothDeviceAddress;
-//    private String m_BluetoothDeviceAddressSecond;
 
-//    private BluetoothGatt m_BluetoothGatt;
-//    private BluetoothGatt m_BluetoothGattSecond;
     private List<NoogiBluetoothGatt> noogiBluetoothGattList = new ArrayList<NoogiBluetoothGatt>();
     private int mConnectionState = STATE_DISCONNECTED;
-//    private int mConnectionStateSecond = STATE_DISCONNECTED;
 
     private static final int STATE_DISCONNECTED = 0;
     private static final int STATE_CONNECTING = 1;
@@ -143,33 +138,15 @@ public class UartService extends Service {
                 mConnectionState = STATE_CONNECTED;
                 broadcastUpdate(intentAction);
 
-//                if(gatt == m_BluetoothGatt){
-//                    broadcastUpdate(intentAction,1);
-//                }
-//                if(gatt == m_BluetoothGattSecond){
-//                    broadcastUpdate(intentAction,2);
-//                }
                 Log.i(TAG, "Connected to GATT server.");
-                // Attempts to discover services after successful connection.
-//                if(m_BluetoothGatt != null) {
-//                    Log.i(TAG, "Attempting to start service discovery:" +
-//                            m_BluetoothGatt.discoverServices());
-//                } else {
-//                    Log.i(TAG, "Attempting to start service discovery:" +
-//                            m_BluetoothGattSecond.discoverServices());
-//                }
+
                 gatt.discoverServices();
 
                 m_is_Disconnect_Intentional = false;
             } else if (newState == BluetoothProfile.STATE_DISCONNECTED) {
                 if(m_is_Disconnect_Intentional == false) {
                     connect(currentNoogiBluetoothGatt.getBluetoothDeviceAddress());
-//                    if(gatt == m_BluetoothGatt) {
-//                        connect(m_BluetoothDeviceAddress);
-//                    }
-//                    if(gatt == m_BluetoothGattSecond){
-//                        connectSecond(m_BluetoothDeviceAddressSecond);
-//                    }
+
                 }
                 else {
                     intentAction = ACTION_GATT_DISCONNECTED;
@@ -182,7 +159,6 @@ public class UartService extends Service {
 
         @Override
         public void onServicesDiscovered(BluetoothGatt gatt, int status) {
-            Log.e(TAG, "onServicesDiscovered: ----------------------------------- 0000000000000000000000000000000 ------------ " + status);
             if (status == BluetoothGatt.GATT_SUCCESS) {
 //                Log.w(TAG, "m_BluetoothGatt = " + m_BluetoothGatt );
                 broadcastUpdate(ACTION_GATT_SERVICES_DISCOVERED, getNoogiBluetoothgattFromGatt(gatt).getBluetoothDeviceAddress());
@@ -235,12 +211,6 @@ public class UartService extends Service {
         LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
     }
 
-//    private void broadcastUpdate(final String action,int buttonIndicator){
-//        final Intent intent = new Intent(action);
-//        intent.putExtra(EXTRA_DEVICE_INDICATOR, buttonIndicator);
-//        LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
-//    }
-
     public class LocalBinder extends Binder {
         UartService getService() {
             return UartService.this;
@@ -289,49 +259,7 @@ public class UartService extends Service {
     }
 
 
-    /**
-     * Connects to the GATT server hosted on the Bluetooth LE device.
-     *
-     * @param address The device address of the destination device.
-     *
-     * @return Return true if the connection is initiated successfully. The connection result
-     *         is reported asynchronously through the
-     *         {@code BluetoothGattCallback#onConnectionStateChange(android.bluetooth.BluetoothGatt, int, int)}
-     *         callback.
-     */
-//    public boolean connect(final String address) {
-//        if (m_BluetoothAdapter == null || address == null) {
-//            Log.w(TAG, "BluetoothAdapter not initialized or unspecified address.");
-//            return false;
-//        }
-//
-//        // Previously connected device.  Try to reconnect.
-//        if (m_BluetoothDeviceAddress != null && address.equals(m_BluetoothDeviceAddress)
-//                && m_BluetoothGatt != null) {
-//            Log.d(TAG, "Trying to use an existing m_BluetoothGatt for connection.");
-//
-//            if (m_BluetoothGatt.connect()) {
-//                mConnectionState = STATE_CONNECTING;
-//                return true;
-//            } else {
-//                return false;
-//            }
-//        }
-//
-//        final BluetoothDevice device = m_BluetoothAdapter.getRemoteDevice(address);
-//        if (device == null) {
-//            Log.w(TAG, "Device not found.  Unable to connect.");
-//            return false;
-//        }
-//        // We want to directly connect to the device, so we are setting the autoConnect
-//        // parameter to false.
-//        //m_BluetoothGatt = device.connectGatt(this, false, mGattCallback);
-//        m_BluetoothGatt = device.connectGatt(this, true, mGattCallback);
-//        Log.d(TAG, "Trying to create a new auto connection.");
-//        m_BluetoothDeviceAddress = address;
-//        mConnectionState = STATE_CONNECTING;
-//        return true;
-//    }
+
 
     private NoogiBluetoothGatt getNoogiBluetoothGattFromAddress(String address){
         if(noogiBluetoothGattList.size() == 0){
@@ -349,6 +277,17 @@ public class UartService extends Service {
         return noogiBluetoothGattList.size();
     }
 
+    /**
+     * Connects to the GATT server hosted on the Bluetooth LE device.
+     *
+     * @param address The device address of the destination device.
+     *
+     * @return Return true if the connection is initiated successfully. The connection result
+     *         is reported asynchronously through the
+     *         {@code BluetoothGattCallback#onConnectionStateChange(android.bluetooth.BluetoothGatt, int, int)}
+     *         callback.
+     */
+
     public boolean connect(final String address) {
         if (m_BluetoothAdapter == null || address == null) {
             Log.w(TAG, "BluetoothAdapter not initialized or unspecified address.");
@@ -362,17 +301,6 @@ public class UartService extends Service {
                 return false;
             }
         }
-        // Previously connected device.  Try to reconnect.
-//        if (m_BluetoothDeviceAddressSecond != null && address.equals(m_BluetoothDeviceAddressSecond)
-//                && m_BluetoothGattSecond != null) {
-//            Log.d(TAG, "Trying to use an existing m_BluetoothGatt for connection.");
-//            if (m_BluetoothGattSecond.connect()) {
-//                mConnectionStateSecond = STATE_CONNECTING;
-//                return true;
-//            } else {
-//                return false;
-//            }
-//        }
 
         final BluetoothDevice device = m_BluetoothAdapter.getRemoteDevice(address);
         if (device == null) {
@@ -407,20 +335,7 @@ public class UartService extends Service {
         for (NoogiBluetoothGatt gatt: noogiBluetoothGattList) {
             gatt.getBluetoothGatt().disconnect();
         }
-//        if(m_BluetoothGatt != null) {
-//            m_BluetoothGatt.disconnect();
-//        }
-//        if(m_BluetoothGattSecond != null) {
-//            m_BluetoothGattSecond.disconnect();
-//        }
-//        List<BluetoothDevice> devices = m_BluetoothGatt.getConnectedDevices();
-//
-//        for(BluetoothDevice device : devices) {
-//
-//            Log.e(TAG, "disconnect: " + device.getAddress() );
-//
-//        }
-        // m_BluetoothGatt.close();
+
     }
 
     /**
@@ -434,45 +349,9 @@ public class UartService extends Service {
             gatt.getBluetoothGatt().close();
         }
         noogiBluetoothGattList.clear();
-//        if(m_BluetoothGatt != null){
-//            m_BluetoothDeviceAddress = null;
-//            m_BluetoothGatt.close();
-//            m_BluetoothGatt = null;
-//        }
-//        if(m_BluetoothGattSecond != null){
-//            m_BluetoothDeviceAddressSecond = null;
-//            m_BluetoothGattSecond.close();
-//            m_BluetoothGattSecond = null;
-//        }
-
 
     }
 
-    /**
-     * Request a read on a given {@code BluetoothGattCharacteristic}. The read result is reported
-     * asynchronously through the {@code BluetoothGattCallback#onCharacteristicRead(android.bluetooth.BluetoothGatt, android.bluetooth.BluetoothGattCharacteristic, int)}
-     * callback.
-     *
-     * @param characteristic The characteristic to read from.
-     */
-//    public void readCharacteristic(BluetoothGattCharacteristic characteristic) {
-//        if (m_BluetoothAdapter == null || m_BluetoothGatt == null) {
-//            Log.w(TAG, "BluetoothAdapter not initialized");
-//            return;
-//        }
-//        m_BluetoothGatt.readCharacteristic(characteristic);
-//    }
-
-    /**
-     * Enables or disables notification on a give characteristic.
-     *
-     */
-
-    /**
-     * Enable Notification on TX characteristic
-     *
-     * @return
-     */
 
     private NoogiBluetoothGatt getNoogiBluetoothGattFromIndex(int index){
         for (NoogiBluetoothGatt gatt: noogiBluetoothGattList) {
@@ -492,18 +371,11 @@ public class UartService extends Service {
     	}
     		*/
         NoogiBluetoothGatt currentNoogiGatt = getNoogiBluetoothGattFromAddress(address);
-        Log.e(TAG, "enableTXNotification: ------------------------11111111111111111111111111111111111---------------------------------- " + address );
         if(!enableTXNotification(currentNoogiGatt.getBluetoothGatt())){
-            Log.e(TAG, "enableTXNotification: ------------------------00000000000000000000000000000---------------------------------- " + address );
             currentNoogiGatt.getBluetoothGatt().disconnect();
             noogiBluetoothGattList.remove(currentNoogiGatt);
         }
-//        if(m_BluetoothGatt != null){
-//            enableTXNotification(m_BluetoothGatt);
-//        }
-//        if(m_BluetoothGattSecond != null){
-//            enableTXNotification(m_BluetoothGattSecond);
-//        }
+
     }
 
     private boolean enableTXNotification(BluetoothGatt bluetoothGatt){
@@ -527,40 +399,10 @@ public class UartService extends Service {
         return true;
     }
 
-//    public void writeRXCharacteristic(byte[] value)
-//    {
-//        BluetoothGattService RxService = m_BluetoothGatt.getService(RX_SERVICE_UUID);
-//        showMessage("m_BluetoothGatt null"+ m_BluetoothGatt);
-//        if (RxService == null) {
-//            showMessage("Rx service not found!");
-//            broadcastUpdate(DEVICE_DOES_NOT_SUPPORT_UART);
-//            return;
-//        }
-//        BluetoothGattCharacteristic RxChar = RxService.getCharacteristic(RX_CHAR_UUID);
-//        if (RxChar == null) {
-//            showMessage("Rx charateristic not found!");
-//            broadcastUpdate(DEVICE_DOES_NOT_SUPPORT_UART);
-//            return;
-//        }
-//        RxChar.setValue(value);
-//        boolean status = m_BluetoothGatt.writeCharacteristic(RxChar);
-//
-//        Log.d(TAG, "write TXchar - status=" + status);
-//    }
 
     private void showMessage(String msg) {
         Log.e(TAG, msg);
     }
-    /**
-     * Retrieves a list of supported GATT services on the connected device. This should be
-     * invoked only after {@code BluetoothGatt#discoverServices()} completes successfully.
-     *
-     * @return A {@code List} of supported services.
-     */
-//    public List<BluetoothGattService> getSupportedGattServices() {
-//        if (m_BluetoothGatt == null) return null;
-//
-//        return m_BluetoothGatt.getServices();
-//    }
+
 
 }

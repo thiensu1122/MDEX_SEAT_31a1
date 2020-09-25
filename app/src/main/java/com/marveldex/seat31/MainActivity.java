@@ -95,7 +95,6 @@ import static com.marveldex.seat31.UartService.EXTRA_DATA_STRING;
 
 public class   MainActivity extends Activity implements RadioGroup.OnCheckedChangeListener {
     private static final int REQUEST_SELECT_DEVICE = 1;
-//    private static final int REQUEST_SELECT_DEVICE_SECOND = 3;
     private static final int REQUEST_ENABLE_BT = 2;
     //private static final int UART_PROFILE_READY = 10;
     public static final String TAG = "nRFUART";
@@ -177,40 +176,6 @@ public class   MainActivity extends Activity implements RadioGroup.OnCheckedChan
                 }
             }
         });
-
-//        mbtn_ConnectDisconnectSecond.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                if (!m_BtAdapter.isEnabled()) {
-//                    Log.i(TAG, "onClick - BT not enabled yet");
-//                    Intent enableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-//                    startActivityForResult(enableIntent, REQUEST_ENABLE_BT);
-//                }
-//                else {
-//                    if (mbtn_ConnectDisconnectSecond.getText().equals("Connect")){
-//
-//                        //Connect button pressed, open DeviceListActivity class, with popup windows that scan for devices
-//
-//                        Intent newIntent = new Intent(MainActivity.this, com.marveldex.seat31.DeviceListActivity.class);
-//                        startActivityForResult(newIntent, REQUEST_SELECT_DEVICE_SECOND);
-//                    } else { // Disconnect button pressed
-//
-//                        if (m_Device!=null){
-//                            m_UartService.disconnect();
-//
-//                        }
-//                    }
-//                }
-//
-//                m_ToastFlag = 0;
-//
-//            }
-//        });
-
-
-     
-        // Set initial UI state
-
 
     }
 
@@ -460,18 +425,6 @@ public class   MainActivity extends Activity implements RadioGroup.OnCheckedChan
                     m_UartService.connect(deviceAddress);
                 }
                 break;
-//        case REQUEST_SELECT_DEVICE_SECOND:
-//            //When the DeviceListActivity return, with the selected device address
-//            if (resultCode == Activity.RESULT_OK && data != null) {
-//                String deviceAddress = data.getStringExtra(BluetoothDevice.EXTRA_DEVICE);
-//                m_Device = BluetoothAdapter.getDefaultAdapter().getRemoteDevice(deviceAddress);
-//
-//                Log.d(TAG, "... onActivityResultdevice.address==" + m_Device + "mserviceValue" + m_UartService);
-//                ((TextView) findViewById(R.id.deviceName)).setText(m_Device.getName()+ " - connecting");
-//                mbtn_ConnectDisconnectSecond.setText("Connecting...");
-//                m_UartService.connectSecond(deviceAddress);
-//            }
-//            break;
 
         case REQUEST_ENABLE_BT:
             // When the request to enable Bluetooth returns
