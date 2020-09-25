@@ -42,40 +42,25 @@ import android.os.IBinder;
 import android.os.Message;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
-import android.widget.Space;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.marveldex.seat31.Model.SensorData;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.PrintWriter;
-import java.io.UnsupportedEncodingException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Timer;
-import java.util.TimerTask;
 
-import static android.os.SystemClock.elapsedRealtime;
-import static com.marveldex.seat31.UartService.EXTRA_DEVICE_INDICATOR;
-
+import static com.marveldex.seat31.UartService.EXTRA_DATA;
+import static com.marveldex.seat31.UartService.EXTRA_DATA_STRING;
 /**
  *
  * @mainpage SCMS( Sitting Cushion Management System) - Marveldex
@@ -110,7 +95,7 @@ import static com.marveldex.seat31.UartService.EXTRA_DEVICE_INDICATOR;
 
 public class   MainActivity extends Activity implements RadioGroup.OnCheckedChangeListener {
     private static final int REQUEST_SELECT_DEVICE = 1;
-    private static final int REQUEST_SELECT_DEVICE_SECOND = 3;
+//    private static final int REQUEST_SELECT_DEVICE_SECOND = 3;
     private static final int REQUEST_ENABLE_BT = 2;
     //private static final int UART_PROFILE_READY = 10;
     public static final String TAG = "nRFUART";
@@ -125,7 +110,7 @@ public class   MainActivity extends Activity implements RadioGroup.OnCheckedChan
     private BluetoothAdapter m_BtAdapter = null;
     //private ListView messageListView;
     //private ArrayAdapter<String> listAdapter;
-    private Button mbtn_ConnectDisconnectFirst,mbtn_Send, mbtn_ConnectDisconnectSecond;
+    private Button mbtn_ConnectDisconnect,mbtn_Send,mbtn_Disconnect;
 
     ArrayList<String> m_DetailList;
     ArrayAdapter<String> m_DetailAdapter;
@@ -158,14 +143,13 @@ public class   MainActivity extends Activity implements RadioGroup.OnCheckedChan
         messageListView.setAdapter(listAdapter);
         messageListView.setDivider(null);
 */
-        mbtn_ConnectDisconnectFirst =(Button) findViewById(R.id.btn_select);
-        mbtn_ConnectDisconnectSecond = (Button) findViewById(R.id.btn_select1);
-
+        mbtn_ConnectDisconnect =(Button) findViewById(R.id.btn_select);
+        mbtn_Disconnect = (Button) findViewById(R.id.btn_disconnect);
         mrl_ui_coc_com_layout = (RelativeLayout)findViewById(R.id.RelativeLayout_COM);
 
         service_init();
 
-        mbtn_ConnectDisconnectFirst.setOnClickListener(new View.OnClickListener() {
+        mbtn_ConnectDisconnect.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (!m_BtAdapter.isEnabled()) {
@@ -174,19 +158,9 @@ public class   MainActivity extends Activity implements RadioGroup.OnCheckedChan
                     startActivityForResult(enableIntent, REQUEST_ENABLE_BT);
                 }
                 else {
-                    if (mbtn_ConnectDisconnectFirst.getText().equals("Connect")){
 
-                        //Connect button pressed, open DeviceListActivity class, with popup windows that scan for devices
-
-                        Intent newIntent = new Intent(MainActivity.this, com.marveldex.seat31.DeviceListActivity.class);
-                        startActivityForResult(newIntent, REQUEST_SELECT_DEVICE);
-                    } else { // Disconnect button pressed
-
-                        if (m_Device!=null){
-                            m_UartService.disconnect();
-
-                        }
-                    }
+                    Intent newIntent = new Intent(MainActivity.this, com.marveldex.seat31.DeviceListActivity.class);
+                    startActivityForResult(newIntent, REQUEST_SELECT_DEVICE);
                 }
 
                 m_ToastFlag = 0;
@@ -194,34 +168,44 @@ public class   MainActivity extends Activity implements RadioGroup.OnCheckedChan
             }
         });
 
-        mbtn_ConnectDisconnectSecond.setOnClickListener(new View.OnClickListener() {
+        mbtn_Disconnect.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!m_BtAdapter.isEnabled()) {
-                    Log.i(TAG, "onClick - BT not enabled yet");
-                    Intent enableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-                    startActivityForResult(enableIntent, REQUEST_ENABLE_BT);
+                if (m_Device!=null) {
+                    m_UartService.disconnect();
+
                 }
-                else {
-                    if (mbtn_ConnectDisconnectSecond.getText().equals("Connect")){
-
-                        //Connect button pressed, open DeviceListActivity class, with popup windows that scan for devices
-
-                        Intent newIntent = new Intent(MainActivity.this, com.marveldex.seat31.DeviceListActivity.class);
-                        startActivityForResult(newIntent, REQUEST_SELECT_DEVICE_SECOND);
-                    } else { // Disconnect button pressed
-
-                        if (m_Device!=null){
-                            m_UartService.disconnect();
-
-                        }
-                    }
-                }
-
-                m_ToastFlag = 0;
-
             }
         });
+
+//        mbtn_ConnectDisconnectSecond.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                if (!m_BtAdapter.isEnabled()) {
+//                    Log.i(TAG, "onClick - BT not enabled yet");
+//                    Intent enableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+//                    startActivityForResult(enableIntent, REQUEST_ENABLE_BT);
+//                }
+//                else {
+//                    if (mbtn_ConnectDisconnectSecond.getText().equals("Connect")){
+//
+//                        //Connect button pressed, open DeviceListActivity class, with popup windows that scan for devices
+//
+//                        Intent newIntent = new Intent(MainActivity.this, com.marveldex.seat31.DeviceListActivity.class);
+//                        startActivityForResult(newIntent, REQUEST_SELECT_DEVICE_SECOND);
+//                    } else { // Disconnect button pressed
+//
+//                        if (m_Device!=null){
+//                            m_UartService.disconnect();
+//
+//                        }
+//                    }
+//                }
+//
+//                m_ToastFlag = 0;
+//
+//            }
+//        });
 
 
      
@@ -285,15 +269,10 @@ public class   MainActivity extends Activity implements RadioGroup.OnCheckedChan
                          String time_str = dateFormat.format(cal.getTime());
 
                          Log.d(TAG, "ACTION_GATT_CONNECTED " + time_str);
-                         int deviceIndicator = mIntent.getIntExtra(EXTRA_DEVICE_INDICATOR,0);
-                         if(deviceIndicator == 1){
-                             mbtn_ConnectDisconnectFirst.setText("Disconnect");
-                         }
-                         if(deviceIndicator ==2) {
-                             mbtn_ConnectDisconnectSecond.setText("Disconnect");
-                         }
 
                          ((TextView) findViewById(R.id.deviceName)).setText(m_Device.getName()+ " - connected " + time_str);
+
+                         mbtn_ConnectDisconnect.setText("Connect (" +m_UartService.getConncetedDeviceCount()+ ")");
 /*
                          listAdapter.add("["+currentDateTimeString+"] Connected to: "+ m_Device.getName());
                          messageListView.smoothScrollToPosition(listAdapter.getCount() - 1);
@@ -316,12 +295,13 @@ public class   MainActivity extends Activity implements RadioGroup.OnCheckedChan
                      public void run() {
                     	 	 String currentDateTimeString = DateFormat.getTimeInstance().format(new Date());
                              Log.d(TAG, "ACTION_GATT_DISCONNECTED");
-                             mbtn_ConnectDisconnectFirst.setText("Connect");
-                             mbtn_ConnectDisconnectSecond.setText("Connect");
+//                             mbtn_ConnectDisconnectFirst.setText("Connect");
+//                             mbtn_ConnectDisconnectSecond.setText("Connect");
                              ((TextView) findViewById(R.id.deviceName)).setText("Not Connected");
 /*
                              listAdapter.add("["+currentDateTimeString+"] Disconnected to: "+ m_Device.getName());
 */
+                             mbtn_ConnectDisconnect.setText("Connect");
                              m_State = UART_PROFILE_DISCONNECTED;
                              m_UartService.close();
                              sensorData.clearIndicator(1);
@@ -333,8 +313,8 @@ public class   MainActivity extends Activity implements RadioGroup.OnCheckedChan
 
           //*********************//
             if (action.equals(com.marveldex.seat31.UartService.ACTION_GATT_SERVICES_DISCOVERED)) {
-
-                m_UartService.enableTXNotification();
+                String address = intent.getStringExtra(EXTRA_DATA_STRING);
+                m_UartService.enableTXNotification(address);
                 Log.d(TAG, "ACTION_GATT_SERVICES_DISCOVERED");
             }
 
@@ -343,7 +323,7 @@ public class   MainActivity extends Activity implements RadioGroup.OnCheckedChan
             //-----------------------------------------------------
 
             if (action.equals(com.marveldex.seat31.UartService.ACTION_DATA_AVAILABLE)) {
-                final byte[] packetVenus2Phone = intent.getByteArrayExtra(com.marveldex.seat31.UartService.EXTRA_DATA);
+                final byte[] packetVenus2Phone = intent.getByteArrayExtra(EXTRA_DATA);
 
                 runOnUiThread(new Runnable() {
                      public void run() {
@@ -370,7 +350,7 @@ public class   MainActivity extends Activity implements RadioGroup.OnCheckedChan
            //*********************//
             if (action.equals(com.marveldex.seat31.UartService.DEVICE_DOES_NOT_SUPPORT_UART)){
             	showMessage("Device doesn't support UART. Disconnecting");
-            	m_UartService.disconnect();
+            	//m_UartService.disconnect();
             }
         }
     };
@@ -475,23 +455,23 @@ public class   MainActivity extends Activity implements RadioGroup.OnCheckedChan
 
                     Log.d(TAG, "... onActivityResultdevice.address==" + m_Device + "mserviceValue" + m_UartService);
                     ((TextView) findViewById(R.id.deviceName)).setText(m_Device.getName()+ " - connecting");
-                    mbtn_ConnectDisconnectFirst.setText("Connecting...");
+//                    mbtn_ConnectDisconnect.setText("Connecting...");
 
                     m_UartService.connect(deviceAddress);
                 }
                 break;
-        case REQUEST_SELECT_DEVICE_SECOND:
-            //When the DeviceListActivity return, with the selected device address
-            if (resultCode == Activity.RESULT_OK && data != null) {
-                String deviceAddress = data.getStringExtra(BluetoothDevice.EXTRA_DEVICE);
-                m_Device = BluetoothAdapter.getDefaultAdapter().getRemoteDevice(deviceAddress);
-
-                Log.d(TAG, "... onActivityResultdevice.address==" + m_Device + "mserviceValue" + m_UartService);
-                ((TextView) findViewById(R.id.deviceName)).setText(m_Device.getName()+ " - connecting");
-                mbtn_ConnectDisconnectSecond.setText("Connecting...");
-                m_UartService.connectSecond(deviceAddress);
-            }
-            break;
+//        case REQUEST_SELECT_DEVICE_SECOND:
+//            //When the DeviceListActivity return, with the selected device address
+//            if (resultCode == Activity.RESULT_OK && data != null) {
+//                String deviceAddress = data.getStringExtra(BluetoothDevice.EXTRA_DEVICE);
+//                m_Device = BluetoothAdapter.getDefaultAdapter().getRemoteDevice(deviceAddress);
+//
+//                Log.d(TAG, "... onActivityResultdevice.address==" + m_Device + "mserviceValue" + m_UartService);
+//                ((TextView) findViewById(R.id.deviceName)).setText(m_Device.getName()+ " - connecting");
+//                mbtn_ConnectDisconnectSecond.setText("Connecting...");
+//                m_UartService.connectSecond(deviceAddress);
+//            }
+//            break;
 
         case REQUEST_ENABLE_BT:
             // When the request to enable Bluetooth returns
