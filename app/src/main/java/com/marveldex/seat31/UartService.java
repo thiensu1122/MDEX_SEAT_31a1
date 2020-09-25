@@ -40,6 +40,7 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
 import com.marveldex.seat31.Model.NoogiBluetoothGatt;
+import com.marveldex.seat31.Model.NoogiBluetoothGattList;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -65,7 +66,7 @@ public class UartService extends Service {
     private BluetoothManager m_BluetoothManager;
     private BluetoothAdapter m_BluetoothAdapter;
 
-    private List<NoogiBluetoothGatt> noogiBluetoothGattList = new ArrayList<NoogiBluetoothGatt>();
+    private NoogiBluetoothGattList noogiBluetoothGattList = new NoogiBluetoothGattList();
     private int mConnectionState = STATE_DISCONNECTED;
 
     private static final int STATE_DISCONNECTED = 0;
@@ -113,7 +114,7 @@ public class UartService extends Service {
 
     private NoogiBluetoothGatt getNoogiBluetoothgattFromGatt(BluetoothGatt gatt){
         NoogiBluetoothGatt currentNoogiBluetoothGatt= null;
-        for (NoogiBluetoothGatt bluetoothGatt: noogiBluetoothGattList) {
+        for (NoogiBluetoothGatt bluetoothGatt: noogiBluetoothGattList.getNoogiBluetoothGattList()) {
             if(gatt == bluetoothGatt.getBluetoothGatt()){
                 currentNoogiBluetoothGatt = bluetoothGatt;
             }
@@ -265,7 +266,7 @@ public class UartService extends Service {
         if(noogiBluetoothGattList.size() == 0){
             return null;
         }
-        for (NoogiBluetoothGatt gatt: noogiBluetoothGattList) {
+        for (NoogiBluetoothGatt gatt: noogiBluetoothGattList.getNoogiBluetoothGattList()) {
             if(gatt.getBluetoothDeviceAddress().equals(address)){
                 return gatt;
             }
@@ -332,7 +333,7 @@ public class UartService extends Service {
             return;
         }
         m_is_Disconnect_Intentional = true;
-        for (NoogiBluetoothGatt gatt: noogiBluetoothGattList) {
+        for (NoogiBluetoothGatt gatt: noogiBluetoothGattList.getNoogiBluetoothGattList()) {
             gatt.getBluetoothGatt().disconnect();
         }
 
@@ -345,7 +346,7 @@ public class UartService extends Service {
     public void close() {
         Log.w(TAG, "m_BluetoothGatt closed");
 
-        for (NoogiBluetoothGatt gatt: noogiBluetoothGattList) {
+        for (NoogiBluetoothGatt gatt: noogiBluetoothGattList.getNoogiBluetoothGattList()) {
             gatt.getBluetoothGatt().close();
         }
         noogiBluetoothGattList.clear();
@@ -354,7 +355,7 @@ public class UartService extends Service {
 
 
     private NoogiBluetoothGatt getNoogiBluetoothGattFromIndex(int index){
-        for (NoogiBluetoothGatt gatt: noogiBluetoothGattList) {
+        for (NoogiBluetoothGatt gatt: noogiBluetoothGattList.getNoogiBluetoothGattList()) {
             if(gatt == noogiBluetoothGattList.get(index)){
                 return gatt;
             }
