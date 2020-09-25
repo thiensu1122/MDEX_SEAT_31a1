@@ -25,7 +25,7 @@ public class NoogiBluetoothGattList {
         return null;
     }
 
-    private NoogiBluetoothGatt getNoogiBluetoothgattFromGatt(BluetoothGatt gatt){
+    public NoogiBluetoothGatt getNoogiBluetoothgattFromGatt(BluetoothGatt gatt){
         NoogiBluetoothGatt currentNoogiBluetoothGatt= null;
         for (NoogiBluetoothGatt bluetoothGatt: noogiBluetoothGattList) {
             if(gatt == bluetoothGatt.getBluetoothGatt()){
@@ -35,7 +35,7 @@ public class NoogiBluetoothGattList {
         return currentNoogiBluetoothGatt;
     }
 
-    private NoogiBluetoothGatt getNoogiBluetoothGattFromAddress(String address){
+    public NoogiBluetoothGatt getNoogiBluetoothGattFromAddress(String address){
         if(noogiBluetoothGattList.size() == 0){
             return null;
         }

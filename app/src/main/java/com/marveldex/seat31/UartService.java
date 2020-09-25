@@ -112,15 +112,6 @@ public class UartService extends Service {
      * @throws
      */
 
-    private NoogiBluetoothGatt getNoogiBluetoothgattFromGatt(BluetoothGatt gatt){
-        NoogiBluetoothGatt currentNoogiBluetoothGatt= null;
-        for (NoogiBluetoothGatt bluetoothGatt: noogiBluetoothGattList.getNoogiBluetoothGattList()) {
-            if(gatt == bluetoothGatt.getBluetoothGatt()){
-                currentNoogiBluetoothGatt = bluetoothGatt;
-            }
-        }
-        return currentNoogiBluetoothGatt;
-    }
 
     // Implements callback methods for GATT events that the app cares about.  For example,
     // connection change and services discovered.
@@ -129,7 +120,7 @@ public class UartService extends Service {
         public void onConnectionStateChange(BluetoothGatt gatt, int status, int newState) {
             String intentAction;
 
-            NoogiBluetoothGatt currentNoogiBluetoothGatt = getNoogiBluetoothgattFromGatt(gatt);
+            NoogiBluetoothGatt currentNoogiBluetoothGatt = noogiBluetoothGattList.getNoogiBluetoothgattFromGatt(gatt);
             if(currentNoogiBluetoothGatt == null){
                 return;
             }
@@ -162,7 +153,7 @@ public class UartService extends Service {
         public void onServicesDiscovered(BluetoothGatt gatt, int status) {
             if (status == BluetoothGatt.GATT_SUCCESS) {
 //                Log.w(TAG, "m_BluetoothGatt = " + m_BluetoothGatt );
-                broadcastUpdate(ACTION_GATT_SERVICES_DISCOVERED, getNoogiBluetoothgattFromGatt(gatt).getBluetoothDeviceAddress());
+                broadcastUpdate(ACTION_GATT_SERVICES_DISCOVERED, noogiBluetoothGattList.getNoogiBluetoothgattFromGatt(gatt).getBluetoothDeviceAddress());
             } else {
                 Log.w(TAG, "onServicesDiscovered received: " + status);
             }
@@ -262,17 +253,7 @@ public class UartService extends Service {
 
 
 
-    private NoogiBluetoothGatt getNoogiBluetoothGattFromAddress(String address){
-        if(noogiBluetoothGattList.size() == 0){
-            return null;
-        }
-        for (NoogiBluetoothGatt gatt: noogiBluetoothGattList.getNoogiBluetoothGattList()) {
-            if(gatt.getBluetoothDeviceAddress().equals(address)){
-                return gatt;
-            }
-        }
-        return null;
-    }
+
 
     public int getConncetedDeviceCount(){
         return noogiBluetoothGattList.size();
@@ -294,7 +275,7 @@ public class UartService extends Service {
             Log.w(TAG, "BluetoothAdapter not initialized or unspecified address.");
             return false;
         }
-        NoogiBluetoothGatt currentNoogiBluetoothGatt = getNoogiBluetoothGattFromAddress(address);
+        NoogiBluetoothGatt currentNoogiBluetoothGatt = noogiBluetoothGattList.getNoogiBluetoothGattFromAddress(address);
         if(currentNoogiBluetoothGatt != null){
             if(currentNoogiBluetoothGatt.getBluetoothGatt().connect()){
                 return true;
@@ -354,14 +335,7 @@ public class UartService extends Service {
     }
 
 
-    private NoogiBluetoothGatt getNoogiBluetoothGattFromIndex(int index){
-        for (NoogiBluetoothGatt gatt: noogiBluetoothGattList.getNoogiBluetoothGattList()) {
-            if(gatt == noogiBluetoothGattList.get(index)){
-                return gatt;
-            }
-        }
-        return null;
-    }
+
     public void enableTXNotification(String address)
     {
     	/*
@@ -371,7 +345,7 @@ public class UartService extends Service {
     		return;
     	}
     		*/
-        NoogiBluetoothGatt currentNoogiGatt = getNoogiBluetoothGattFromAddress(address);
+        NoogiBluetoothGatt currentNoogiGatt =noogiBluetoothGattList.getNoogiBluetoothGattFromAddress(address);
         if(!enableTXNotification(currentNoogiGatt.getBluetoothGatt())){
             currentNoogiGatt.getBluetoothGatt().disconnect();
             noogiBluetoothGattList.remove(currentNoogiGatt);
