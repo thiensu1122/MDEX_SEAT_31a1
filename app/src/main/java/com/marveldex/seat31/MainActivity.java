@@ -237,7 +237,6 @@ public class   MainActivity extends Activity implements RadioGroup.OnCheckedChan
 
                          ((TextView) findViewById(R.id.deviceName)).setText(m_Device.getName()+ " - connected " + time_str);
 
-                         mbtn_ConnectDisconnect.setText("Connect (" +m_UartService.getConncetedDeviceCount()+ ")");
 /*
                          listAdapter.add("["+currentDateTimeString+"] Connected to: "+ m_Device.getName());
                          messageListView.smoothScrollToPosition(listAdapter.getCount() - 1);

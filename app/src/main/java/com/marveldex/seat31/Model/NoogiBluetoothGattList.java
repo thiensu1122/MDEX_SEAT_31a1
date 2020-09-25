@@ -1,28 +1,43 @@
 package com.marveldex.seat31.Model;
 
 import android.bluetooth.BluetoothGatt;
+import android.bluetooth.BluetoothGattCharacteristic;
+import android.bluetooth.BluetoothGattService;
+import android.util.Log;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
+import static com.marveldex.seat31.UartService.RX_SERVICE_UUID;
+import static com.marveldex.seat31.UartService.TX_CHAR_UUID;
+
 public class NoogiBluetoothGattList {
+    private static final String TAG = "NoogiBluetoothGattList";
     List<NoogiBluetoothGatt> noogiBluetoothGattList = new ArrayList<NoogiBluetoothGatt>();
 
-    public int size(){
-        return noogiBluetoothGattList.size();
+    public int confirmedDeviceServiceCount(){
+        int count = 0;
+        for (NoogiBluetoothGatt gatt: noogiBluetoothGattList) {
+            if(gatt.isServicesConfirm()){
+                count++;
+            }
+        }
+        return count;
     }
 
     public void add(NoogiBluetoothGatt gatt){
         noogiBluetoothGattList.add(gatt);
     }
 
-    public NoogiBluetoothGatt getNoogiBluetoothGattFromIndex(int index){
-        for (NoogiBluetoothGatt gatt: noogiBluetoothGattList) {
-            if(gatt == noogiBluetoothGattList.get(index)){
-                return gatt;
+    public void checkDeviceServices(NoogiBluetoothGatt currentNoogiGatt) {
+        BluetoothGattService RxService = currentNoogiGatt.getBluetoothGatt().getService(RX_SERVICE_UUID);
+        if(RxService != null){
+            BluetoothGattCharacteristic TxChar = RxService.getCharacteristic(TX_CHAR_UUID);
+            if (TxChar != null) {
+                currentNoogiGatt.setServicesConfirm(true);
             }
         }
-        return null;
     }
 
     public NoogiBluetoothGatt getNoogiBluetoothgattFromGatt(BluetoothGatt gatt){
@@ -67,4 +82,6 @@ public class NoogiBluetoothGattList {
     public void remove(NoogiBluetoothGatt currentNoogiGatt) {
         noogiBluetoothGattList.remove(currentNoogiGatt);
     }
+
+
 }

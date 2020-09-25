@@ -251,14 +251,6 @@ public class UartService extends Service {
     }
 
 
-
-
-
-
-    public int getConncetedDeviceCount(){
-        return noogiBluetoothGattList.size();
-    }
-
     /**
      * Connects to the GATT server hosted on the Bluetooth LE device.
      *
@@ -293,7 +285,7 @@ public class UartService extends Service {
         // parameter to false.
         //m_BluetoothGatt = device.connectGatt(this, false, mGattCallback);
         BluetoothGatt gatt = device.connectGatt(this, true, mGattCallback);
-        NoogiBluetoothGatt noogiBluetoothGatt = new NoogiBluetoothGatt(gatt, address, noogiBluetoothGattList.size()+1);
+        NoogiBluetoothGatt noogiBluetoothGatt = new NoogiBluetoothGatt(gatt, address);
         noogiBluetoothGattList.add(noogiBluetoothGatt);
 //        m_BluetoothGattSecond = device.connectGatt(this, true, mGattCallback);
         Log.d(TAG, "Trying to create a second auto connection.");
@@ -345,33 +337,32 @@ public class UartService extends Service {
     		return;
     	}
     		*/
+
         NoogiBluetoothGatt currentNoogiGatt =noogiBluetoothGattList.getNoogiBluetoothGattFromAddress(address);
-        if(!enableTXNotification(currentNoogiGatt.getBluetoothGatt())){
-            currentNoogiGatt.getBluetoothGatt().disconnect();
-            noogiBluetoothGattList.remove(currentNoogiGatt);
-        }
+        noogiBluetoothGattList.checkDeviceServices(currentNoogiGatt);
+        enableTXNotification(currentNoogiGatt.getBluetoothGatt());
+
 
     }
 
-    private boolean enableTXNotification(BluetoothGatt bluetoothGatt){
+    private void enableTXNotification(BluetoothGatt bluetoothGatt){
         BluetoothGattService RxService = bluetoothGatt.getService(RX_SERVICE_UUID);
         if (RxService == null) {
             showMessage("Rx service not found!");
             broadcastUpdate(DEVICE_DOES_NOT_SUPPORT_UART);
-            return false;
+            return;
         }
         BluetoothGattCharacteristic TxChar = RxService.getCharacteristic(TX_CHAR_UUID);
         if (TxChar == null) {
             showMessage("Tx charateristic not found!");
             broadcastUpdate(DEVICE_DOES_NOT_SUPPORT_UART);
-            return false;
+            return;
         }
         bluetoothGatt.setCharacteristicNotification(TxChar,true);
 
         BluetoothGattDescriptor descriptor = TxChar.getDescriptor(CCCD);
         descriptor.setValue(BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE);
         bluetoothGatt.writeDescriptor(descriptor);
-        return true;
     }
 
 

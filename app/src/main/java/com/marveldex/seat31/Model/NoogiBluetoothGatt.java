@@ -5,13 +5,23 @@ import android.bluetooth.BluetoothGatt;
 public class NoogiBluetoothGatt {
 
     BluetoothGatt bluetoothGatt;
-    String BluetoothDeviceAddress;
-    int index;
+    String bluetoothDeviceAddress;
 
-    public NoogiBluetoothGatt(BluetoothGatt bluetoothGatt, String bluetoothDeviceAddress, int index) {
+    boolean servicesConfirm = false;
+
+
+    public boolean isServicesConfirm() {
+        return servicesConfirm;
+    }
+
+    public void setServicesConfirm(boolean servicesConfirm) {
+        this.servicesConfirm = servicesConfirm;
+    }
+
+    public NoogiBluetoothGatt(BluetoothGatt bluetoothGatt, String bluetoothDeviceAddress) {
         this.bluetoothGatt = bluetoothGatt;
-        BluetoothDeviceAddress = bluetoothDeviceAddress;
-        this.index = index;
+        this.bluetoothDeviceAddress = bluetoothDeviceAddress;
+
     }
 
     public BluetoothGatt getBluetoothGatt() {
@@ -23,18 +33,12 @@ public class NoogiBluetoothGatt {
     }
 
     public String getBluetoothDeviceAddress() {
-        return BluetoothDeviceAddress;
+        return bluetoothDeviceAddress;
     }
 
     public void setBluetoothDeviceAddress(String bluetoothDeviceAddress) {
-        BluetoothDeviceAddress = bluetoothDeviceAddress;
+        this.bluetoothDeviceAddress = bluetoothDeviceAddress;
     }
 
-    public int getIndex() {
-        return index;
-    }
 
-    public void setIndex(int index) {
-        this.index = index;
-    }
 }
