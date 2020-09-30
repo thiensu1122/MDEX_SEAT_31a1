@@ -7,9 +7,9 @@ import java.util.Arrays;
 public class SensorData {
     private static final String TAG = "SensorData";
     //40Bytes
-    byte[] rawDataSensor1 = new byte[40];
+    byte[] rawDataSensor1 = new byte[48];
     //40Bytes
-    byte[] rawDataSensor2 = new byte[40];
+    byte[] rawDataSensor2 = new byte[48];
     // 20 bytes
     byte[] backTop = new byte[20];
     // 20 bytes
@@ -25,8 +25,8 @@ public class SensorData {
 
     boolean isPackage1Complete = false;
     boolean isPackage2Complete = false;
-    byte[] firstIndicator = new byte[3];
-    byte[] secondIndicator = new byte[3];
+    byte[] firstIndicator = new byte[] {71, 48, 49};
+    byte[] secondIndicator =new byte[] {71, 48, 50};
     public SensorData(){
         clearIndicator(1);
         clearIndicator(2);
@@ -37,34 +37,34 @@ public class SensorData {
             return;
         }
         ///// if fist indicator is empty then save value to fist indicator.
-        if(isIndicatorEmpty(1) || isFistSensor(rawInput)){
+        if(isFistSensor(rawInput)){
             if(rawInput[0] == 'M') {
-                System.arraycopy(rawInput, 1, rawDataSensor1, 0, 20); // offset source 1 for indicator 'M', offset destination 0, number of bytes 20 for 'M';
+                System.arraycopy(rawInput, 0, rawDataSensor1, 0, 24); // offset source 1 for indicator 'M', offset destination 0, number of bytes 20 for 'M';
                 System.arraycopy(rawInput, 1, backTop, 0, 20); // offset source 1 for indicator 'M', offset destination 0, number of bytes 20 for 'M'
-                System.arraycopy(rawInput, 21, firstIndicator, 0, 3);
+                //System.arraycopy(rawInput, 21, firstIndicator, 0, 3);
                 isPackage1Complete = false;
             }
             if(rawInput[0] == 'S'){
-                System.arraycopy(rawInput, 1, rawDataSensor1, 20, 20); // offset source 1 for indicator 'S', offset destination 20 since M took 20 bytes, number of bytes 20 for 'S';
+                System.arraycopy(rawInput, 0, rawDataSensor1, 24, 24); // offset source 1 for indicator 'S', offset destination 20 since M took 20 bytes, number of bytes 20 for 'S';
                 System.arraycopy(rawInput, 1, backBottom, 0, 20); // offset source 1 for indicator 'S', offset destination 20 since S took 20 bytes, number of bytes 20 for 'S'
-                System.arraycopy(rawInput, 21, firstIndicator, 0, 3);
+                //System.arraycopy(rawInput, 21, firstIndicator, 0, 3);
                 isPackage1Complete = true;
    
             }
         } else {
             ///// if fist indicator is not empty then save value to second indicator.
             if(rawInput[0] == 'M') {
-                System.arraycopy(rawInput, 1, rawDataSensor2, 0, 20);   // offset source 1 for indicator 'M', offset destination 0, number of bytes 20 for "M";
+                System.arraycopy(rawInput, 0, rawDataSensor2, 0, 24);   // offset source 1 for indicator 'M', offset destination 0, number of bytes 20 for "M";
                 System.arraycopy(rawInput, 1, hipLeft, 0, 10);          // o0ffset source 1 for indicator 'M', offset destination 0 since hipleft is first 10 bytes, number of bytes 10
                 System.arraycopy(rawInput, 10, hipRight, 0, 10);        // offset source 1 for indicator 'M', offset destination 10 since hipleft is first 10 bytes, number of bytes 10
-                System.arraycopy(rawInput, 21, secondIndicator, 0, 3);
+                //System.arraycopy(rawInput, 21, secondIndicator, 0, 3);
                 isPackage2Complete = false;
             }
             if(rawInput[0] == 'S'){
-                System.arraycopy(rawInput, 1, rawDataSensor2, 20, 20); // offset source 1 for indicator 'S', offset destination 20 since M took 20 bytes, number of bytes 20 for "S";
+                System.arraycopy(rawInput, 0, rawDataSensor2, 24, 24); // offset source 1 for indicator 'S', offset destination 20 since M took 20 bytes, number of bytes 20 for "S";
                 System.arraycopy(rawInput, 1, thighLeft, 0, 10);        // offset source 1 for indicator 'S', offset destination 0 since thighleft is first 10 bytes, number of bytes 10
                 System.arraycopy(rawInput, 10, thighRight, 0, 10);      // offset source 1 for indicator 'S', offset destination 10 since thighleft is first 10 bytes, number of bytes 10
-                System.arraycopy(rawInput, 21, secondIndicator, 0, 3);
+                //System.arraycopy(rawInput, 21, secondIndicator, 0, 3);
 
                 isPackage2Complete = true;
 
@@ -81,10 +81,10 @@ public class SensorData {
     //// when disconnect device we need to clear indicator.
     public void clearIndicator(int index){
         if(index ==1){
-            Arrays.fill( firstIndicator, (byte) 0 );
+            //Arrays.fill( firstIndicator, (byte) 0 );
             isPackage1Complete = false;
         } else if (index ==2 ){
-            Arrays.fill( secondIndicator, (byte) 0 );
+            //Arrays.fill( secondIndicator, (byte) 0 );
             isPackage2Complete = false;
         }
     }

@@ -304,7 +304,7 @@ public class   MainActivity extends Activity implements RadioGroup.OnCheckedChan
                          }
 
                          sensorData.onReceiveRawBytes(packetVenus2Phone);
-//                         sensorData.printData();
+                         sensorData.printData();
 
 
                      }
