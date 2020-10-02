@@ -56,14 +56,14 @@ public class SensorData {
             if(rawInput[0] == 'M') {
                 System.arraycopy(rawInput, 0, rawDataSensor2, 0, 24);   // offset source 1 for indicator 'M', offset destination 0, number of bytes 20 for "M";
                 System.arraycopy(rawInput, 1, hipLeft, 0, 10);          // o0ffset source 1 for indicator 'M', offset destination 0 since hipleft is first 10 bytes, number of bytes 10
-                System.arraycopy(rawInput, 10, hipRight, 0, 10);        // offset source 1 for indicator 'M', offset destination 10 since hipleft is first 10 bytes, number of bytes 10
+                System.arraycopy(rawInput, 11, hipRight, 0, 10);        // offset source 1 for indicator 'M', offset destination 11 since hipleft is first 10 bytes, number of bytes 10
                 //System.arraycopy(rawInput, 21, secondIndicator, 0, 3);
                 isPackage2Complete = false;
             }
             if(rawInput[0] == 'S'){
                 System.arraycopy(rawInput, 0, rawDataSensor2, 24, 24); // offset source 1 for indicator 'S', offset destination 20 since M took 20 bytes, number of bytes 20 for "S";
                 System.arraycopy(rawInput, 1, thighLeft, 0, 10);        // offset source 1 for indicator 'S', offset destination 0 since thighleft is first 10 bytes, number of bytes 10
-                System.arraycopy(rawInput, 10, thighRight, 0, 10);      // offset source 1 for indicator 'S', offset destination 10 since thighleft is first 10 bytes, number of bytes 10
+                System.arraycopy(rawInput, 11, thighRight, 0, 10);      // offset source 1 for indicator 'S', offset destination 11 since thighleft is first 10 bytes, number of bytes 10
                 //System.arraycopy(rawInput, 21, secondIndicator, 0, 3);
 
                 isPackage2Complete = true;
@@ -145,6 +145,8 @@ public class SensorData {
         Log.d(TAG, "Raw data 2 : " + Arrays.toString(rawDataSensor2));
         Log.d(TAG, "back Top : " + Arrays.toString(backTop));
         Log.d(TAG, "back Bottom : " +Arrays.toString(backBottom));
+        Log.d(TAG, "hip left : " +Arrays.toString(hipLeft));
+        Log.d(TAG, "hip right : " +Arrays.toString(hipRight));
         Log.d(TAG, "thigh left : " + Arrays.toString(thighLeft));
         Log.d(TAG, "thigh right : " + Arrays.toString(thighRight));
         Log.d(TAG, "Fist Sensor : " + Arrays.toString(firstIndicator));
